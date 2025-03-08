@@ -2,10 +2,13 @@ version: '3.8'
 
 services:
   bot:
-    build: .
+    image: ghcr.io/uussoop/sentry-chatbot:latest
     env_file: .env
     restart: unless-stopped
-    volumes:
-      - .:/app
     environment:
-      - PYTHONUNBUFFERED=1 
+      - PYTHONUNBUFFERED=1
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('https://api.telegram.org/bot' + open('.env').readline().split('=')[1].strip() + '/getMe')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3 
